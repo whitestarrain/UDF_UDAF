@@ -1,4 +1,4 @@
-package cn.edu.neu.udf.tools;
+package cn.edu.neu.tools;
 
 /**
  * @author liyu
