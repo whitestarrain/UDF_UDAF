@@ -7,15 +7,15 @@ import org.apache.hadoop.hive.ql.exec.UDFArgumentTypeException;
 import org.apache.hadoop.hive.ql.metadata.HiveException;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDF;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
+import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorConverters;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
-import org.apache.hadoop.io.Text;
 
 /**
  * @author liyu
  */
 public class IpToCityUDF extends GenericUDF {
-    // 这里会定义好输入和输出
+    private transient ObjectInspectorConverters.Converter[] converters;
 
     @Override
     public ObjectInspector initialize(ObjectInspector[] objectInspectors) throws UDFArgumentException {
@@ -35,6 +35,11 @@ public class IpToCityUDF extends GenericUDF {
             }
         }
 
+        converters = new ObjectInspectorConverters.Converter[objectInspectors.length];
+        // 创建第一个参数的转换器，转换为string类型
+        converters[0] = ObjectInspectorConverters.getConverter(objectInspectors[0],
+                PrimitiveObjectInspectorFactory.javaStringObjectInspector);
+
         // 返回输出类型
         return PrimitiveObjectInspectorFactory
                 .getPrimitiveJavaObjectInspector(PrimitiveObjectInspector.PrimitiveCategory.STRING);
@@ -42,15 +47,8 @@ public class IpToCityUDF extends GenericUDF {
 
     @Override
     public Object evaluate(DeferredObject[] args) throws HiveException {
-        String s = args[0].get().toString();
-        Text city = new Text();
-        String query = IpQueryInterface.query(s);
-        if(query==null){
-            city.set("null");
-        }else
-        {
-            city.set(query);
-        }
+        String s = (String) converters[0].convert(args[0].get());
+        String  city= IpQueryInterface.query(s);
         return city;
     }
 

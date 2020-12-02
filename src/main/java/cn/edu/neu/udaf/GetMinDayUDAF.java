@@ -28,7 +28,7 @@ public class GetMinDayUDAF extends AbstractGenericUDAFResolver {
         PrimitiveObjectInspector mapInput3;
         ObjectInspector out;// map 和out 输出都为int类型。所以这里就定义一个
         PrimitiveObjectInspector reduceInput; // int 类型
-        int minDate = 0;
+        int minDate = Integer.MAX_VALUE;
 
         @Override
         public ObjectInspector init(Mode m, ObjectInspector[] parameters) throws HiveException {
@@ -63,7 +63,7 @@ public class GetMinDayUDAF extends AbstractGenericUDAFResolver {
          */
         @Override
         public void reset(AggregationBuffer agg) throws HiveException {
-            ((MaxDateAgg) agg).minDate = 0;
+            ((MaxDateAgg) agg).minDate = Integer.MAX_VALUE;
         }
 
         /**
@@ -109,7 +109,7 @@ public class GetMinDayUDAF extends AbstractGenericUDAFResolver {
         }
 
         static class MaxDateAgg implements AggregationBuffer {
-            int minDate = 0;
+            int minDate = Integer.MAX_VALUE;
 
             void compareDate(int date) {
                 if (date < minDate) {

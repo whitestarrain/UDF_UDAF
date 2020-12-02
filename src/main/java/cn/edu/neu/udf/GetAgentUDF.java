@@ -10,7 +10,6 @@ import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.ObjectInspectorConverters;
 import org.apache.hadoop.hive.serde2.objectinspector.PrimitiveObjectInspector;
 import org.apache.hadoop.hive.serde2.objectinspector.primitive.PrimitiveObjectInspectorFactory;
-import org.apache.hadoop.io.Text;
 
 /**
  * @author liyu
@@ -53,7 +52,7 @@ public class GetAgentUDF extends GenericUDF {
     @Override
     public Object evaluate(DeferredObject[] args) throws HiveException {
         String agent = (String) converters[0].convert(args[0].get());
-        return new Text(JudgeAgent.judge(agent));
+        return JudgeAgent.judge(agent);
     }
 
     @Override
