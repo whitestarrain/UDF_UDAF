@@ -26,20 +26,24 @@ public class OldUserJudgmentUDF extends GenericUDF {
         // 长度确定了，初始化转换器
         converters = new ObjectInspectorConverters.Converter[arguments.length];
 
-//
-//        for (int i = 0; i < 3; i++) {
-//            // 三个参数的类型校验。都是int类型
-//            if (!arguments[i].getCategory().equals(ObjectInspector.Category.PRIMITIVE)) {
-//                throw new UDFArgumentTypeException(0,
-//                        "Only primitive type arguments are accepted but " + arguments[i].getCategory() + " " +
-//                                "is passed.");
-//            } else {
-//                if (!((PrimitiveObjectInspector) arguments[i]).getPrimitiveCategory().equals(PrimitiveObjectInspector.PrimitiveCategory.INT)) {
-//                    throw new UDFArgumentTypeException(0,
-//                            "Only primitive int type arguments are accepted but " + ((PrimitiveObjectInspector) arguments[i]).getPrimitiveCategory() + " is passed.");
-//                }
-//            }
-//        }
+
+        for (int i = 0; i < 3; i++) {
+            // 三个参数的类型校验。都是int类型
+            if (!arguments[i].getCategory().equals(ObjectInspector.Category.PRIMITIVE)) {
+                throw new UDFArgumentTypeException(0,
+                        "Only primitive type arguments are accepted but " + arguments[i].getCategory() + " " +
+                                "is passed.");
+            } else {
+                if (!(((PrimitiveObjectInspector) arguments[i]).getPrimitiveCategory().
+                        equals(PrimitiveObjectInspector.PrimitiveCategory.INT)
+                        ||
+                        ((PrimitiveObjectInspector) arguments[i]).getPrimitiveCategory().
+                                equals(PrimitiveObjectInspector.PrimitiveCategory.LONG))) {
+                    throw new UDFArgumentTypeException(0,
+                            "Only primitive int or long type arguments are accepted but " + ((PrimitiveObjectInspector) arguments[i]).getPrimitiveCategory() + " is passed.");
+                }
+            }
+        }
 
         converters[0] = ObjectInspectorConverters.getConverter(arguments[0],
                 PrimitiveObjectInspectorFactory.javaIntObjectInspector);
@@ -57,7 +61,7 @@ public class OldUserJudgmentUDF extends GenericUDF {
         int maxDay = (int) converters[1].convert(arguments[1].get());
         int countDay = (int) converters[2].convert(arguments[2].get());
         int flag = 0;
-        if (maxDay > minDay && maxDay - minDay > 60 && countDay / (maxDay - minDay) > 0.2){
+        if (maxDay > minDay && maxDay - minDay > 60 && countDay / (maxDay - minDay) > 0.2) {
             flag = 1;
         }
         return flag;

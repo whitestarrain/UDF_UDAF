@@ -10,6 +10,6 @@ public class IpQueryInterface {
         for (String s : split) {
             sum += Integer.parseInt(s);
         }
-        return City.CITY_LIST[sum % City.CITY_LIST.length];
+        return CityContainer.CITY_LIST[sum % CityContainer.CITY_LIST.length];
     }
 }
