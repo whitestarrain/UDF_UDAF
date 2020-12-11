@@ -46,22 +46,22 @@ public class OldUserJudgmentUDF extends GenericUDF {
         }
 
         converters[0] = ObjectInspectorConverters.getConverter(arguments[0],
-                PrimitiveObjectInspectorFactory.javaIntObjectInspector);
+                PrimitiveObjectInspectorFactory.javaLongObjectInspector);
         converters[1] = ObjectInspectorConverters.getConverter(arguments[1],
-                PrimitiveObjectInspectorFactory.javaIntObjectInspector);
+                PrimitiveObjectInspectorFactory.javaLongObjectInspector);
         converters[2] = ObjectInspectorConverters.getConverter(arguments[2],
-                PrimitiveObjectInspectorFactory.javaIntObjectInspector);
+                PrimitiveObjectInspectorFactory.javaLongObjectInspector);
         // 返回类型
         return PrimitiveObjectInspectorFactory.getPrimitiveJavaObjectInspector(PrimitiveObjectInspector.PrimitiveCategory.INT);
     }
 
     @Override
     public Object evaluate(DeferredObject[] arguments) throws HiveException {
-        int minDay = (int) converters[0].convert(arguments[0].get());
-        int maxDay = (int) converters[1].convert(arguments[1].get());
-        int countDay = (int) converters[2].convert(arguments[2].get());
+        long minDay = (long) converters[0].convert(arguments[0].get());
+        long maxDay = (long) converters[1].convert(arguments[1].get());
+        long countDay = (long) converters[2].convert(arguments[2].get());
         int flag = 0;
-        if (maxDay > minDay && maxDay - minDay > 60 && countDay / (maxDay - minDay) > 0.2) {
+        if (maxDay - minDay >= 3 && (float) countDay / (maxDay - minDay) > 0.7) {
             flag = 1;
         }
         return flag;
